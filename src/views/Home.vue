@@ -4,6 +4,7 @@ import workers from "../assets/workers.jpg";
 import diagram from "../assets/diagram.jpg";
 import AOS from "aos";
 import gsap from "gsap";
+import Web3Service from '../services/Web3Service';
 export default {
   data() {
     return {
@@ -32,7 +33,14 @@ export default {
       ],
     };
   },
-  methods: {},
+  methods: {
+    sendMoney() {
+      Web3Service.sendMoney(this.$store.getters.getAccount);
+    },
+    investMoney() {
+      Web3Service.investMoney(this.$store.getters.getAccount);
+    }
+  },
   mounted() {
     AOS.init();
   },
@@ -51,7 +59,8 @@ export default {
           <p class="card-text" @click="prev">
             Everyone is buying, buy and you! We not scammers!
           </p>
-          <a href="#" class="btn btn-success">Buy Now!</a>
+          <a href="#" @click="sendMoney" class="btn btn-success">Get approve!</a>
+          <a href="#" @click="investMoney" class="btn btn-success">Invest money!</a>
         </div>
       </div>
     </div>

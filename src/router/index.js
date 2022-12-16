@@ -9,9 +9,9 @@ const routes = [
     props: true,
   },
 ];
-
+const base = process.env.NODE_ENV === "production" ? "/vue_nft_sample/" : "/";
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(base),
   routes,
 });
 

@@ -9,5 +9,6 @@ export default defineConfig({
       '@' : path.resolve(__dirname, './src')
     },
   },
-  plugins: [vue()]
+  plugins: [vue()],
+  base: process.env.NODE_ENV === "production" ? "/vue_nft_sample/" : "/",
 })

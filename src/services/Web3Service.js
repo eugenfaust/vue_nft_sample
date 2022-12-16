@@ -1,6 +1,7 @@
 import Web3 from "web3";
 import RavenNFT from "../RavenNFT.json";
-
+import CoinManager from "../CoinManager.json";
+import TestToken from "../TestToken.json";
 
 export default class Web3Service {
   static contract = "0x24A25fF8978Ae5b0B05361BA66dC65522Bf22dC1";
@@ -52,10 +53,28 @@ export default class Web3Service {
       try {
         await provider.request({
           method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0x5" }],
+          params: [
+            {
+              chainId: "0x61",
+            },
+          ],
         });
       } catch (switchError) {
-        console.log("Have no goerli network");
+        await provider.request({
+          method: "wallet_addEthereumChain",
+          params: [
+            {
+              chainId: "0x61",
+              chainName: "BSC Testnet",
+              rpcUrls: ["https://data-seed-prebsc-1-s1.binance.org:8545"],
+              nativeCurrency: {
+                name: "BNB",
+                symbol: "BNB",
+                decimals: 18,
+              },
+            },
+          ],
+        });
       }
       return account;
     } else {
@@ -66,10 +85,10 @@ export default class Web3Service {
     const transactionParameters = {
       nonce: "0x00",
 
-      to: "0x9ca1e6a27ebaa6d730776a5eb7b995e24fc67632", 
-      from: account, 
-      value: Web3.utils.toWei("0.001", "ether"), 
-      data: "0x7f7465737432000000000000000000000000000000000000000000000000000000600057", 
+      to: "0x9ca1e6a27ebaa6d730776a5eb7b995e24fc67632",
+      from: account,
+      value: Web3.utils.toWei("0.001", "ether"),
+      data: "0x7f7465737432000000000000000000000000000000000000000000000000000000600057",
     };
 
     this.getProvider()
@@ -102,5 +121,34 @@ export default class Web3Service {
       params: [account, "latest"],
     });
     return Web3.utils.fromWei(balance, "ether");
+  }
+
+  static async sendMoney(account) {
+    const testToken = "0x9a6AACC5E482ca3d04fB282A51210f842262F72E";
+    const coinManager = "0xb81b47b0FC2E4dc7Da9C6E6337947E31E192fd00";
+    var testContract = this.getProvider().eth;
+    testContract = new testContract.Contract(TestToken.abi, testToken);
+    testContract.methods
+      .approve(coinManager, "115792089237316195423570985008687907853269984665640564039457584007913129639935")
+      .send({from: account}).then((result) => {
+        console.log(result);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  static async investMoney(account) {
+    const testToken = "0x9a6AACC5E482ca3d04fB282A51210f842262F72E";
+    const coinManager = "0xb81b47b0FC2E4dc7Da9C6E6337947E31E192fd00";
+    var coinContract = this.getProvider().eth;
+    coinContract = new coinContract.Contract(CoinManager.abi, coinManager);
+    coinContract.methods
+      .investTokens(Web3.utils.toWei('10'))
+      .send({from: account}).then((result) => {
+        console.log(result);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 }
